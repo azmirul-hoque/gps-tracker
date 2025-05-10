@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Share Location</title>
+  </head>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #00b09b, #96c93d);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.3);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 25px;
+      background-color: #ffffff;
+      color: #00b09b;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #f0f0f0;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <h2>Tap below to share your location</h2>
+      <button onclick="getLocation()">Share Location</button>
+      <p id="status"></p>
+    </div>
+
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(sendLocation, showError);
+        } else {
+          document.getElementById("status").innerText =
+            "Geolocation not supported";
+        }
+      }
+
+      function sendLocation(position) {
+        fetch("http://localhost:3000/location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }),
+        })
+          .then((res) => {
+            document.getElementById("status").innerText =
+              "Location sent successfully.";
+          })
+          .catch((err) => {
+            document.getElementById("status").innerText =
+              "Error sending location.";
+          });
+      }
+
+      function showError(error) {
+        document.getElementById("status").innerText = "Error getting location.";
+      }
+    </script>
+  </body>
+</html>
